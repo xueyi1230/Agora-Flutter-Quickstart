@@ -1,67 +1,108 @@
-# Agora Flutter Quickstart
+# Agora Flutter Voice 语音通话应用
 
-*其他语言版本： [简体中文](README.zh.md)*
+在官方的[视频通话demo](https://github.com/AgoraIO-Community/Agora-Flutter-Quickstart)基础上，通过关闭视频模块，修改为语音通话应用。
 
-This tutorial describes how to create an Agora account and build a sample app with Agora using [Flutter](https://flutter.io/).
+## 主要修改
+/lib/src/pages
 
-## Prerequisites
-- Agora.io [Developer Account](https://dashboard.agora.io/signin/)
-- [Flutter](https://flutter.io/) 1.0.0
+* 新增 call_voice.dart 文件
+* index.dart 中增加新页面入口
 
-## Quick Start
-This repository shows you how to use Agora Flutter SDK to build a simple video call app. It demonstrates you how to:
+/lib/src/utils
 
-- Join / leave a channel
-- Mute / unmute audio
-- Switch camera views
-- Layout multiple video views
+* videosession.dart 模型中增加“是否有音量”字段
 
-![Screenshot-1](screenshot-1.png)
-![Screenshot-2](screenshot-2.png)
+## 显示
+
+首页新增语音聊天入口，进入后本地用户显示为固定头像，远端用户显示为随机头像。
+
+## 功能
+
+### （未完成）正在说话的用户提示
+
+[onAudioVolumeIndication](https://docs.agora.io/cn/Video/API%20Reference/java/classio_1_1agora_1_1rtc_1_1_i_rtc_engine_event_handler.html#a4d37f2b4d569fa787bb8c0e3ae8cd424) 监听正在说话的用户以及说话者的音量
+
+API说明：
+
+本地用户独享一个 onAudioVolumeIndication 回调；远端说话者共用一个 onAudioVolumeIndication 回调。
+
+因此在设定的时间周期内，该回调将会触发：
+
+* 一次（本地用户无音量，远端无音量或有音量speakerIds = []或[x]）
+* 或两次（[0]、[]；[0]、[x]；[0]、[]）
+
+无法得知哪次调用是本地，哪次是远端。暂时没找到显示/隐藏说话提示的好方法。
+
+## 附录
+* Agora 没有专门的 flutter 版本文档，可参考 [Android API 文档](https://docs.agora.io/cn/Video/API%20Reference/java/index.html)进行开发。
+
+* 原项目教程：[基于 Agora Flutter SDK，构建你的第一个 Flutter 视频通话应用](https://rtcdeveloper.com/t/topic/12981)
+
+---
+
+我是原 README 的分割线
+
+---
+
+*Other languages： [English](README.en.md)*
+
+本教程介绍如何使用[Flutter](https://flutter.io/)创建Agora帐户并使用Agora构建示例应用程序。
+
+## 准备工作
+ -  Agora.io [开发者帐户](https://dashboard.agora.io/signin/)
+ -  [Flutter](https://flutter.io/) 1.0.0
+
+## 快速开始
+这个示例向您展示如何使用Agora Flutter SDK构建一个简单的视频通话应用程序。它向您展示了如何：
+
+ - 加入/离开频道
+ - 静音/取消静音
+ - 切换摄像头
+ - 布局多个视频视图
+
+![screenshot-1](screenshot-1.png)
+![screenshot-2](screenshot-2.png)
 
 
-### Create an Account and Obtain an App ID
-To build and run the sample application, first obtain an app ID: 
+### 创建一个帐户并获取一个App ID
+要构建和运行示例应用程序，请首先获取Agora App ID：
 
-1. Create a developer account at [agora.io](https://dashboard.agora.io/signin/). Once you finish the sign-up process, you are redirected to the dashboard.
-2. Navigate in the dashboard tree on the left to **Projects** > **Project List**.
-3. Copy the app ID that you obtain from the dashboard into a text file. You will use this when you launch the app.
+1. 在[agora.io](https://dashboard.agora.io/signin/)创建开发人员帐户。完成注册过程后，您将被重定向到仪表板页面。
+2. 在左侧的仪表板树中导航到**项目** > **项目列表**。
+3. 将从仪表板获取的App ID复制到文本文件中。您将在启动应用程序时用到它。
 
-### Update and Run the Sample Application
+### 更新并运行示例应用程序
 
-Open the [settings.dart](lib/src/utils/settings.dart) file and add the app ID.
+打开[settings.dart](lib/src/utils/settings.dart)文件并添加App ID。
 
 ```dart
-  const APP_ID = "";
+  const APP_ID ="";
 ```
 
-Run the `packages get` command in your project directory:
+在项目目录中运行`packages get`命令:
 
-```bash  
-  # install dependencies
-  flutter packages get
+```shell
+  #install dependencies
+  flutter packages get
 ```
 
-Once the build is complete, run the `run` command to start the app.
+构建完成后，执行`run`命令启动应用程序。
 
-```bash
-  # start app
-  flutter run
+```shell
+  #start app
+  flutter run
 ```
 
-**We recommend you to use IDE to control overall build process during development**
+**我们建议您在开发期间按照flutter官方引导推荐，使用IDE(包括但不限于VS Code)来控制整体构建过程**
 
-Details about how to set up the IDE please take a look at [here](https://flutter.io/docs/get-started/editor?tab=vscode)
+有关如何设置IDE的详细信息，请参阅[此处](https://flutter.io/docs/get-started/editor?tab=vscode)
 
-## Resources
-* Complete [API documentation](https://docs.agora.io/en/) at the Developer Center
-* [File bugs about this sample](https://github.com/AgoraIO-Community/Agora-Flutter-Quickstart/issues)
-* [Flutter lab: Write your first Flutter app](https://flutter.io/docs/get-started/codelab)
-* [Flutter cookbook: Useful Flutter samples](https://flutter.io/docs/cookbook)
-* [Flutter online documentation](https://flutter.io/docs), which offers tutorials, samples, guidance on mobile development, and a full API reference.
-
-## Credit
-https://pub.dartlang.org/packages/permission_handler
+## 附录
+* 开发者中心[API文档](https://docs.agora.io/en/)
+* 如果发现了示例代码的bug, 欢迎提交 [issue](https://github.com/AgoraIO/Agora-Interactive-Broadcasting-Live-Streaming-Web/issues)
+* [Flutter lab：编写你的第一个Flutter应用程序](https://flutter.io/docs/get-started/codelab)
+* [Flutter cookbook](https://flutter.io/docs/cookbook)
+* [Flutter在线文档](https://flutter.io/docs)，提供有关移动开发的教程，示例，指南以及完整的API参考。
 
 ## License
-This software is under the MIT License (MIT).
+MIT

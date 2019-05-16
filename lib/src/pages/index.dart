@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import './call.dart';
+import './call_voice.dart';
 
 class IndexPage extends StatefulWidget {
   @override
@@ -50,25 +51,50 @@ class IndexState extends State<IndexPage> {
                     ))
                   ]),
                   Padding(
-                      padding: EdgeInsets.symmetric(vertical: 20),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: RaisedButton(
-                              onPressed: () => onJoin(),
-                              child: Text("Join"),
-                              color: Colors.blueAccent,
-                              textColor: Colors.white,
-                            ),
+                    padding: EdgeInsets.symmetric(vertical: 20),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: RaisedButton(
+                            onPressed: () => onJoin('voice'),
+                            color: Colors.blueAccent,
+                            textColor: Colors.white,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.mic),
+                                Text(" Join")
+                              ],
+                            )
+                          ),
+                        ),
+                      ],
+                    )
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: RaisedButton(
+                          onPressed: () => onJoin('video'),
+                          color: Colors.blueAccent,
+                          textColor: Colors.white,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.videocam),
+                              Text(" Join")
+                            ],
                           )
-                        ],
-                      ))
+                        ),
+                      ),
+                    ],
+                  )
                 ],
               )),
         ));
   }
 
-  onJoin() async {
+  onJoin(type) async {
     // update input validation
     setState(() {
       _channelController.text.isEmpty
@@ -76,20 +102,36 @@ class IndexState extends State<IndexPage> {
           : _validateError = false;
     });
     if (_channelController.text.isNotEmpty) {
-      // await for camera and mic permissions before pushing video page
-      await _handleCameraAndMic();
-      // push video page with given channel name
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => new CallPage(
-                    channelName: _channelController.text,
-                  )));
+      if (type == 'voice') {
+        // 请求麦克风的权限
+        await _handleMic();
+        // push video page with given channel name
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => new CallVoicePage(
+                      channelName: _channelController.text,
+                    )));
+      } else {
+        // await for camera and mic permissions before pushing video page
+        await _handleCameraAndMic();
+        // push video page with given channel name
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => new CallPage(
+                      channelName: _channelController.text,
+                    )));
+      }
     }
   }
 
   _handleCameraAndMic() async {
     await PermissionHandler().requestPermissions(
         [PermissionGroup.camera, PermissionGroup.microphone]);
+  }
+  _handleMic() async {
+    await PermissionHandler().requestPermissions(
+        [PermissionGroup.microphone]);
   }
 }
